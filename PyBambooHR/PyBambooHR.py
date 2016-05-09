@@ -12,8 +12,8 @@ to BambooHR API calls defined at http://www.bamboohr.com/api/documentation/.
 
 import datetime
 import requests
-from . import utils
-from .utils import make_field_xml
+import utils
+from utils import make_field_xml
 from os.path import basename
 
 # Python 3 basestring compatibility:
@@ -265,6 +265,24 @@ class PyBambooHR(object):
             employees = [utils.underscore_keys(employee) for employee in employees]
 
         return employees
+
+    def get_user_directory(self):
+        """
+        API method for returning all users in the Bamboo system. This includes terminated employees.
+        http://www.bamboohr.com/api/documentation/metadata.php#getUsers
+
+        @return: A list of employee dictionaries which is a list of employees in the directory.
+        """
+        url = self.base_url + "meta/users"
+        r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
+        r.raise_for_status()
+
+        data = r.json().values()
+        users = filter(lambda x: x["employeeId"], data)
+        if self.underscore_keys:
+            users = [utils.underscore_keys(employee) for employee in users]
+
+        return users
 
     def get_employee(self, employee_id, field_list=None):
         """
