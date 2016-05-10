@@ -15,6 +15,7 @@ import requests
 import utils
 from utils import make_field_xml
 from os.path import basename
+from itertools import groupby
 
 # Python 3 basestring compatibility:
 try:
@@ -504,8 +505,10 @@ class PyBambooHR(object):
         url = self.base_url + 'employees/{}/tables/{}'.format(employee_id, table_name)
         r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
         r.raise_for_status()
-
-        return utils.transform_tabular_data(r.content)
+        results = r.json()
+        results.sort(key=lambda x: x["employeeId"])
+        grouped_data = {employee_id: list(values) for employee_id, values in groupby(results, lambda x: x["employeeId"])}
+        return grouped_data
 
     def get_employee_changes(self, since=None):
         """
