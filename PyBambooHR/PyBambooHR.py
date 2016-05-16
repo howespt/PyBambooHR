@@ -510,6 +510,13 @@ class PyBambooHR(object):
         grouped_data = {employee_id: list(values) for employee_id, values in groupby(results, lambda x: x["employeeId"])}
         return grouped_data
 
+    def get_custom_table(self, table_name, employee_id='all'):
+        url = self.base_url + 'employees/{}/tables/{}'.format(employee_id, table_name)
+        r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
+        r.raise_for_status()
+        results = r.json()
+        return results
+
     def get_employee_changes(self, since=None):
         """
         Returns a list of dictionaries, each with id, action, and lastChanged keys, representing
