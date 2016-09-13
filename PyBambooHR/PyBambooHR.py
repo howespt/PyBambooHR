@@ -16,6 +16,7 @@ import utils
 from utils import make_field_xml
 from os.path import basename
 from itertools import groupby
+import xml.dom.minidom
 
 # Python 3 basestring compatibility:
 try:
@@ -284,6 +285,29 @@ class PyBambooHR(object):
             users = [utils.underscore_keys(employee) for employee in users]
 
         return users
+
+    def get_custom_table_list(self):
+        """
+        API method for returning all tables in the Bamboo system.
+        http://www.bamboohr.com/api/documentation/metadata.php
+
+        @return: A list of tables.
+        """
+        url = self.base_url + "meta/tables"
+        r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
+        r.raise_for_status()
+
+        xml = xml.dom.minidom.parseString(r.text)
+        tables = xml.firstChild
+
+        customTables = []
+        for table in tables.childNodes:
+            if table.nodeName == "table":
+                if table.attributes and table.attributes.get("alias"):
+                    node = table.attributes.get("alias")
+                    customTables.append(node.nodeValue)
+
+        return customTables
 
     def get_employee(self, employee_id, field_list=None):
         """
