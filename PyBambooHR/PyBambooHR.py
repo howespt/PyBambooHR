@@ -16,7 +16,7 @@ import utils
 from utils import make_field_xml
 from os.path import basename
 from itertools import groupby
-import xml.dom.minidom
+from xml.dom import minidom
 
 # Python 3 basestring compatibility:
 try:
@@ -297,7 +297,7 @@ class PyBambooHR(object):
         r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
         r.raise_for_status()
 
-        xml = xml.dom.minidom.parseString(r.text)
+        xml = minidom.parseString(r.text)
         tables = xml.firstChild
 
         customTables = []
