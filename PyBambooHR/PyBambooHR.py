@@ -324,10 +324,7 @@ class PyBambooHR(object):
 
         if field_list:
             for f in field_list:
-                if not self.employee_fields.get(f):
-                    raise UserWarning("You passed in an invalid field")
-                else:
-                    get_fields.append(f)
+                get_fields.append(f)
         else:
             for field in self.employee_fields:
                 get_fields.append(field)
