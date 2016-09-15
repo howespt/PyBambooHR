@@ -309,6 +309,16 @@ class PyBambooHR(object):
 
         return customTables
 
+    def get_custom_fields_for_employees(self):
+        url = self.base_url + "meta/fields"
+        r = requests.get(url, headers=self.headers, auth=(self.api_key, ''))
+        r.raise_for_status()
+
+        data = r.json()
+        custom_fields = [field.get("alias") for field in data if field.get("alias", "").startswith("custom")]
+        
+        return custom_fields
+
     def get_employee(self, employee_id, field_list=None):
         """
         API method for returning a single employee based on employee id.
