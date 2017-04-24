@@ -276,7 +276,16 @@ class PyBambooHR(object):
         @return: A list of employee dictionaries which is a list of employees in the directory.
         """
         url = self.base_url + "meta/users"
-        r = requests.get(url, headers=self.headers, auth=(self.api_key, 'x'))
+        got_directory = False
+        failed_attempts = 0
+        while not got_directory and failed_attempts < 10:
+            try:
+                r = requests.get(url, headers=self.headers, auth=(self.api_key, 'x'))
+                got_directory = True
+            except:
+                time.sleep(3)
+        if failed_attempts >= 10:
+            raise Exception("Failed trying to get user directory")
         r.raise_for_status()
 
         data = r.json().values()
