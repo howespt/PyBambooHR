@@ -13,6 +13,7 @@ to BambooHR API calls defined at http://www.bamboohr.com/api/documentation/.
 import datetime
 import requests
 import utils
+import time
 from utils import make_field_xml
 from os.path import basename
 from itertools import groupby
